@@ -13,6 +13,7 @@
 /* global variables */
 var photoOrder = [1,2,3,4,5];
 var figureCount = 3;
+var autoAdvance = setInterval(rightAdvance, 5000);
 
 function populateFigures () {
    var filename;
@@ -40,8 +41,14 @@ function populateFigures () {
    }
 }
 
-/* shift all images one figure to the left, and change values in photoOrder array to match  */
 function rightArrow() {
+   clearInterval(autoAdvance);
+   rightAdvance();
+}
+
+/* shift all images one figure to the left, and change values in photoOrder array to match  */
+function rightAdvance() {
+   var autoAdvance = setInterval(rightAdvance, 5000);
    for (var i = 0; i < 5; i++) {
       if ((photoOrder[i] + 1) === 6) {
          photoOrder[i] = 1;
@@ -54,6 +61,7 @@ function rightArrow() {
 
 /* shift all images one figure to the right, and change values in photoOrder array to match  */
 function leftArrow() {
+   clearInterval(autoAdvance);
    for (var i = 0; i < 5; i++) {
       if ((photoOrder[i] - 1) === 0) {
          photoOrder[i] = 5;
@@ -66,7 +74,15 @@ function leftArrow() {
 
 /* open center figure in separate window */
 function zoomFig() {
-   var zoomWindow = window.open("zoom.html", "zoomwin", "width=960,height=600");
+   var propertyWidth = 960;
+   var propertyHeight = 600;
+   var winLeft = ((screen.width - propertyWidth) / 2);
+var winTop = ((screen.height - propertyHeight) / 2);
+var winOptions = "width=960,height=600,";
+winOptions += ",left=" + winLeft;
+winOptions += ",top=" + winTop;
+
+   var zoomWindow = window.open("zoom.html", "zoomwin", winOptions);
    zoomWindow.focus();
 }
 
@@ -78,70 +94,6 @@ function createEventListeners() {
       leftarrow.addEventListener("click", leftArrow, false);
    } else if (leftarrow.attachEvent) {
       leftArrow.attachEvent("onclick", leftArrow);
-   }
-
-
-   function previewFive () {
-      // alert("previewFive() event handler");
-      var lastFigure = document.createElement("figure");
-      lastFigure.id = "fig5";
-      lastFigure.style.zIndex = "5";
-      lastFigure.style.position = "absolute";
-      lastFigure.style.right = "45px";
-      lastFigure.style.top = "67px";
-
-      var lastImage = document.createElement("img");
-      lastImage.width = "240";
-      lastImage.height = "135";
-
-      var articleElem = document.getElementsByTagName("article")[0];
-      
-      lastFigure.appendChild(lastImage);
-      // articleElem.appendChild(lastFigure);
-
-      articleElem.insertBefore(lastFigure, document.getElementById("rightarrow"));
-
-      var firstFigure = lastFigure.cloneNode(true);
-      firstFigure.id = "fig1";
-      firstFigure.style.right = "";
-      firstFigure.style.left = "45px";
-
-      // articleElem.appendChild(firstFigure);
-      articleElem.insertBefore(firstFigure, document.getElementById("fig2"));
-
-      document.getElementsByTagName("img")[0].src = "images/IMG_0" + photoOrder[0] + "sm.jpg";
-      document.getElementsByTagName("img")[4].src = "images/IMG_0" + photoOrder[4] + "sm.jpg";
-      figureCount = 5;
-
-      var numberButton = document.querySelector("#fiveButton p");
-      numberButton.innerHTML = "Show fewer images";
-
-      if (numberButton.addEventListener) {
-         numberButton.removeEventListener("click", previewFive, false);
-         numberButton.addEventListener("click", previewThree, false);
-      } else if (numberButton.attachEvent) {
-         numberButton.detachEvent("onclick", previewFive);
-         numberButton.attachEvent("onclick", previewThree);
-      }
-   }
-
-   function previewThree() {
-      // alert("previewThree() called");
-      var articleElem = document.getElementsByTagName("article")[0];
-      var numberButton = document.querySelector("#fiveButton p");
-      articleElem.removeChild(document.getElementById("fig1"));
-      articleElem.removeChild(document.getElementById("fig5"));
-
-
-      figureCount = 3;
-      numberButton.innerHTML = "Show more images";
-      if (numberButton.addEventListener) {
-         numberButton.removeEventListener("click", previewThree, false);
-         numberButton.addEventListener("click", previewFive, false);
-      } else if (numberButton.attachEvent) {
-         numberButton.detachEvent("onclick", previewThree);
-         numberButton.attachEvent("onclick", previewFive);
-      }
    }
 
    var showAllButton = document.querySelector("#fiveButton p");
@@ -159,9 +111,6 @@ function createEventListeners() {
       rightArrow.attachEvent("onclick", rightArrow);
    }
 
-
-
-
    var mainFig = document.getElementsByTagName("img")[1];
    // alert(mainFig);
 
@@ -171,9 +120,68 @@ function createEventListeners() {
    else if (mainFig.attachEvent) {
       mainFig.attachEvent("onclick", zoomFig);
    }
+}
 
-   function zoomFig() {
-      // alert("center image clicked");
+function previewThree() {
+   // alert("previewThree() called");
+   var articleElem = document.getElementsByTagName("article")[0];
+   var numberButton = document.querySelector("#fiveButton p");
+   articleElem.removeChild(document.getElementById("fig1"));
+   articleElem.removeChild(document.getElementById("fig5"));
+
+
+   figureCount = 3;
+   numberButton.innerHTML = "Show more images";
+   if (numberButton.addEventListener) {
+      numberButton.removeEventListener("click", previewThree, false);
+      numberButton.addEventListener("click", previewFive, false);
+   } else if (numberButton.attachEvent) {
+      numberButton.detachEvent("onclick", previewThree);
+      numberButton.attachEvent("onclick", previewFive);
+   }
+}
+
+function previewFive () {
+   // alert("previewFive() event handler");
+   var lastFigure = document.createElement("figure");
+   lastFigure.id = "fig5";
+   lastFigure.style.zIndex = "5";
+   lastFigure.style.position = "absolute";
+   lastFigure.style.right = "45px";
+   lastFigure.style.top = "67px";
+
+   var lastImage = document.createElement("img");
+   lastImage.width = "240";
+   lastImage.height = "135";
+
+   var articleElem = document.getElementsByTagName("article")[0];
+   
+   lastFigure.appendChild(lastImage);
+   // articleElem.appendChild(lastFigure);
+
+   articleElem.insertBefore(lastFigure, document.getElementById("rightarrow"));
+
+   var firstFigure = lastFigure.cloneNode(true);
+   firstFigure.id = "fig1";
+   firstFigure.style.right = "";
+   firstFigure.style.left = "45px";
+
+   // articleElem.appendChild(firstFigure);
+   articleElem.insertBefore(firstFigure, document.getElementById("fig2"));
+   document.getElementsByTagName("img")[0].src = "images/IMG_0" + photoOrder[0] + "sm.jpg";
+   document.getElementsByTagName("img")[4].src = "images/IMG_0" + photoOrder[4] + "sm.jpg";
+   
+   figureCount = 5;
+
+   var numberButton = document.querySelector("#fiveButton p");
+   numberButton.innerHTML = "Show fewer images";
+
+   if (numberButton.addEventListener) {
+      numberButton.removeEventListener("click", previewFive, false);
+      numberButton.addEventListener("click", previewThree, false);
+   } else if (numberButton.attachEvent) {
+      numberButton.detachEvent("onclick", previewFive);
+      numberButton.attachEvent("onclick", previewThree);
    }
 }
 

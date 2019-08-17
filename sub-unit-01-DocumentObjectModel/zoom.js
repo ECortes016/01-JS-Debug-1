@@ -26,8 +26,11 @@ function closeWin() {
 
 function createEventListener() {
    var closeWindowDiv = document.getElementsByTagName("p")[0];
+
    if (closeWindowDiv.addEventListener) {
-      closeWindowDiv.addEventListener("onclick", closeWin);
+      closeWindowDiv.addEventListener("click", closeWin, false);
+   } else if (closeWindowDiv.attachEvent) {
+      closeWindowDiv.attachEvent("onclick", closeWin);
    }
 }
 
