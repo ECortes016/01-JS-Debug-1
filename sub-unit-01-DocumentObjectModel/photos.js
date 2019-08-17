@@ -42,13 +42,13 @@ function populateFigures () {
 }
 
 function rightArrow() {
+   var autoAdvance = setInterval(rightAdvance, 5000);
    clearInterval(autoAdvance);
    rightAdvance();
 }
 
 /* shift all images one figure to the left, and change values in photoOrder array to match  */
 function rightAdvance() {
-   var autoAdvance = setInterval(rightAdvance, 5000);
    for (var i = 0; i < 5; i++) {
       if ((photoOrder[i] + 1) === 6) {
          photoOrder[i] = 1;
